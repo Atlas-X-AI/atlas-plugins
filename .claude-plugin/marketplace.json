@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "atlas-plugins",
+  "description": "Atlas-X-AI plugin marketplace — hardened, tested Claude Code plugins for AI-driven operations",
+  "owner": {
+    "name": "Atlas-X-AI"
+  },
+  "plugins": [
+    {
+      "name": "atlas-ralph-loop",
+      "description": "Hardened Ralph Loop with reliable termination — scans all text blocks, file-based signals, regression tests",
+      "source": "./plugins/atlas-ralph-loop",
+      "category": "development"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "atlas-ralph-loop",
+  "version": "1.1.0",
+  "description": "Hardened Ralph Loop with reliable termination. Fixes: scans ALL text blocks (not just last), file-based termination signal, Perl regex no-match fix. Fork of claude-plugins-official/ralph-loop.",
+  "author": {
+    "name": "anombyte93"
+  }
+}
