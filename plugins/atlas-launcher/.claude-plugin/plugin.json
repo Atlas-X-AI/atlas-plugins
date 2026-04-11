@@ -1,0 +1,8 @@
+{
+  "name": "atlas-launcher",
+  "version": "0.1.0",
+  "description": "Tmux session management MCP — fleet orchestration, session spawn/send/capture, RAM-aware triage. The consolidated successor to claude-launcher.",
+  "author": {
+    "name": "Atlas-X-AI"
+  }
+}

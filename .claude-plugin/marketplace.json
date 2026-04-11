@@ -11,6 +11,12 @@
       "description": "Hardened Ralph Loop with reliable termination — scans all text blocks, file-based signals, regression tests",
       "source": "./plugins/atlas-ralph-loop",
       "category": "development"
+    },
+    {
+      "name": "atlas-launcher",
+      "description": "Tmux session management MCP — fleet orchestration, session spawn/send/capture, RAM-aware triage",
+      "source": "./plugins/atlas-launcher",
+      "category": "development"
     }
   ]
 }

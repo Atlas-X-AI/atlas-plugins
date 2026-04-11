@@ -1,0 +1,9 @@
+{
+  "atlas-launcher": {
+    "command": "python3",
+    "args": ["-m", "atlas_launcher.server"],
+    "env": {
+      "PYTHONPATH": "${ATLAS_LAUNCHER_PATH:-/home/anombyte/Hermes/current-projects/atlas-launcher}"
+    }
+  }
+}
