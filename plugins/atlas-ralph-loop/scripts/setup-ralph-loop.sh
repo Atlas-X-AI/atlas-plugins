@@ -137,6 +137,9 @@ else
   COMPLETION_PROMISE_YAML="null"
 fi
 
+# Write frontmatter (needs variable expansion) then prompt body (must NOT expand
+# backticks or other shell metacharacters — fixes upstream #33309).
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 cat > .claude/ralph-loop.local.md <<EOF
 ---
 active: true
@@ -144,11 +147,12 @@ iteration: 1
 session_id: ${CLAUDE_CODE_SESSION_ID:-}
 max_iterations: $MAX_ITERATIONS
 completion_promise: $COMPLETION_PROMISE_YAML
-started_at: "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+started_at: "$STARTED_AT"
 ---
 
-$PROMPT
 EOF
+# Append prompt as literal text — printf %s avoids interpreting backslashes/backticks
+printf '%s\n' "$PROMPT" >> .claude/ralph-loop.local.md
 
 # Output setup message
 cat <<EOF

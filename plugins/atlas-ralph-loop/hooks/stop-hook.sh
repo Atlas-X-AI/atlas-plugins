@@ -40,9 +40,22 @@ COMPLETION_PROMISE=$(echo "$FRONTMATTER" | grep '^completion_promise:' | sed 's/
 # Session isolation: the state file is project-scoped, but the Stop hook
 # fires in every Claude Code session in that project. If another session
 # started the loop, this session must not block (or touch the state file).
-# Legacy state files without session_id fall through (preserves old behavior).
+#
+# Fix for upstream #39530: CLAUDE_CODE_SESSION_ID env var is unreliable.
+# When session_id is empty in the state file, backfill it from the hook
+# input JSON (which always has the correct session_id) on the first invocation.
+# This makes the guard work even when the env var was missing at setup time.
 STATE_SESSION=$(echo "$FRONTMATTER" | grep '^session_id:' | sed 's/session_id: *//' || true)
 HOOK_SESSION=$(echo "$HOOK_INPUT" | jq -r '.session_id // ""')
+
+# Backfill: if state file has empty session_id but hook provides one, stamp it now
+if [[ -z "$STATE_SESSION" ]] && [[ -n "$HOOK_SESSION" ]]; then
+  TEMP_FILE="${RALPH_STATE_FILE}.tmp.$$"
+  sed "s/^session_id:.*/session_id: $HOOK_SESSION/" "$RALPH_STATE_FILE" > "$TEMP_FILE"
+  mv "$TEMP_FILE" "$RALPH_STATE_FILE"
+  STATE_SESSION="$HOOK_SESSION"
+fi
+
 if [[ -n "$STATE_SESSION" ]] && [[ "$STATE_SESSION" != "$HOOK_SESSION" ]]; then
   exit 0
 fi
