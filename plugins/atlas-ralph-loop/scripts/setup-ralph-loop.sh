@@ -112,19 +112,29 @@ done
 # Join all prompt parts with spaces
 PROMPT="${PROMPT_PARTS[*]:-}"
 
-# Validate prompt is non-empty
+# Default prompt: self-improvement loop when no args given
 if [[ -z "$PROMPT" ]]; then
-  echo "❌ Error: No prompt provided" >&2
-  echo "" >&2
-  echo "   Ralph needs a task description to work on." >&2
-  echo "" >&2
-  echo "   Examples:" >&2
-  echo "     /ralph-loop Build a REST API for todos" >&2
-  echo "     /ralph-loop Fix the auth bug --max-iterations 20" >&2
-  echo "     /ralph-loop --completion-promise 'DONE' Refactor code" >&2
-  echo "" >&2
-  echo "   For all options: /ralph-loop --help" >&2
-  exit 1
+  PROMPT="You are in a self-improvement loop on this project.
+
+Each iteration:
+1. Read CLAUDE.md and any project tracking docs (Soul_Purpose.md, TODO, etc)
+2. Run tests — check for failures, warnings, coverage gaps
+3. Pick the SINGLE highest-impact improvement you can make RIGHT NOW
+4. Make it. Test it. Commit it with a clear message.
+5. If genuinely nothing left to improve, write DONE to .claude/ralph-done
+
+Do NOT ask questions. Do NOT plan extensively. Just improve.
+Use available skills and agents where relevant.
+Priority: broken > incomplete > untested > ugly > slow.
+One change per iteration. Small, tested, committed."
+
+  # Default to DONE completion promise and 20 iterations if not set
+  if [[ "$COMPLETION_PROMISE" == "null" ]]; then
+    COMPLETION_PROMISE="DONE"
+  fi
+  if [[ "$MAX_ITERATIONS" -eq 0 ]]; then
+    MAX_ITERATIONS=20
+  fi
 fi
 
 # Create state file for stop hook (markdown with YAML frontmatter)
