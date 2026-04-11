@@ -1,17 +1,19 @@
 ---
 description: "Start Ralph Loop in current session"
 argument-hint: "PROMPT [--max-iterations N] [--completion-promise TEXT]"
-allowed-tools: ["Bash(bash ${CLAUDE_PLUGIN_ROOT}/scripts/setup-ralph-loop.sh:*)"]
+allowed-tools: ["Bash(bash *setup-ralph-loop.sh*)"]
 hide-from-slash-command-tool: "true"
 ---
 
 # Ralph Loop Command
 
-Execute the setup script to initialize the Ralph loop:
+Run this command using the Bash tool to initialize the Ralph loop:
 
-```!
+```
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup-ralph-loop.sh" $ARGUMENTS
 ```
+
+You MUST execute the above command using the Bash tool now. Do not skip this step.
 
 Please work on the task. When you try to exit, the Ralph loop will feed the SAME PROMPT back to you for the next iteration. You'll see your previous work in files and git history, allowing you to iterate and improve.
 
