@@ -7,13 +7,19 @@ hide-from-slash-command-tool: "true"
 
 # Ralph Loop Command
 
-Run this command using the Bash tool to initialize the Ralph loop:
+Initialize the Ralph loop by running the setup script with the Bash tool.
 
+IMPORTANT: The prompt text MUST be wrapped in double quotes to protect special characters (apostrophes, backticks, etc). Flags go OUTSIDE the quoted prompt.
+
+Example:
+```
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup-ralph-loop.sh" "the prompt text goes here" --completion-promise "DONE" --max-iterations 20
+```
+
+Now run the command with the user's arguments. Quote the prompt portion in double quotes:
 ```
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup-ralph-loop.sh" $ARGUMENTS
 ```
-
-You MUST execute the above command using the Bash tool now. Do not skip this step.
 
 Please work on the task. When you try to exit, the Ralph loop will feed the SAME PROMPT back to you for the next iteration. You'll see your previous work in files and git history, allowing you to iterate and improve.
 
