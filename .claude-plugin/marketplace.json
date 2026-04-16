@@ -19,9 +19,9 @@
       "category": "development"
     },
     {
-      "name": "prd-taskmaster",
-      "description": "Zero-config goal-to-tasks engine for Claude Code, plugin-native rebuild with CDD-verified execution",
-      "source": "./plugins/prd-taskmaster",
+      "name": "atlas-go",
+      "description": "Zero-config goal-to-tasks engine for Claude Code. Plugin-native rebuild with CDD-verified execution.",
+      "source": "./plugins/atlas-go",
       "category": "development"
     }
   ]
