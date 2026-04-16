@@ -443,7 +443,7 @@ def validate_setup() -> dict:
         "cli_path": cli_path,
         "cli_version": cli_version,
         "next_action": (
-            "Setup complete. Proceed to Phase 1 (Preflight)."
+            "Setup complete. Proceed to Phase 1 (DISCOVER)."
             if all_passed
             else f"{len(critical_failures)} critical check(s) failing. Run the 'fix' command from each failed check."
         ),

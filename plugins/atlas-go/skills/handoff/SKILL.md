@@ -27,10 +27,16 @@ structured choice, dispatch the chosen mode. Mode D is a roadmap teaser only.**
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="HANDOFF")`.
-   If the call returns `{allowed: false, reason: ...}`, report the reason and
-   stop. The gate protects against re-entering a completed phase or skipping
-   ahead from GENERATE.
+1. Call `mcp__plugin_atlas-go_go__check_gate(phase="HANDOFF", evidence={})`.
+   If the call returns `{gate_passed: false, violations: [...]}`, report the
+   violations and stop. The gate protects against re-entering a completed
+   phase or skipping ahead from GENERATE.
+
+   **Known issue (Mum dogfood feedback [4]/[10]):** check_gate(HANDOFF)
+   requires `user_mode_choice` and `plan_file_exists` — both produced by
+   HANDOFF itself. On first entry, evidence=`{}` will fail. State machine
+   LEGAL_TRANSITIONS already prevents illegal entry — proceed past this
+   gate on first entry. Semantic fix in flight (see morning brief).
 2. Read the GENERATE outputs — `.taskmaster/docs/prd.md`, `.taskmaster/tasks/tasks.json`,
    `.taskmaster/reports/task-complexity-report.json`. If any are missing,
    report and stop. The gate should have caught this, but belt-and-braces.
@@ -362,8 +368,10 @@ Handoff:
 
 After the evidence gate passes:
 
-1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="EXECUTE")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(expected_current="HANDOFF", target="EXECUTE", evidence={"user_mode_choice": "<A|B|C>", "plan_file_exists": True, "capabilities_tier": "<free|premium>"})`.
    The call atomically transitions `pipeline.json` from HANDOFF to EXECUTE.
+   The `expected_current` field is the compare-and-swap guard;
+   `evidence` is stored under `phase_evidence[EXECUTE]` for audit.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    EXECUTE directly — the orchestrator re-reads `current_phase` and routes.
 

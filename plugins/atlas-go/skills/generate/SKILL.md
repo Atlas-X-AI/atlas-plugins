@@ -26,10 +26,17 @@ into tasks, expand every task into subtasks. Quality over speed.**
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="GENERATE")`.
-   If the call returns `{allowed: false, reason: ...}`, report the reason and
-   stop. The gate protects against re-entering a completed phase or skipping
-   ahead from DISCOVER.
+1. Call `mcp__plugin_atlas-go_go__check_gate(phase="GENERATE", evidence={})`.
+   If the call returns `{gate_passed: false, violations: [...]}`, report the
+   violations and stop. The gate protects against re-entering a completed
+   phase or skipping ahead from DISCOVER.
+
+   **Known issue (Mum dogfood feedback [10] — WORST):** check_gate(GENERATE)
+   currently checks `task_count > 0`, `subtask_coverage >= 1.0`, and
+   `validation_grade in (EXCELLENT, GOOD)` — all of which are GENERATE's
+   OWN OUTPUTS, not entry preconditions. First-time entry deadlocks. State
+   machine LEGAL_TRANSITIONS already prevents illegal entry — proceed past
+   this gate on first entry. Semantic fix in flight (see morning brief).
 2. Read the DISCOVER output (discovery summary + `CONSTRAINTS CAPTURED` block
    + scale classification). If any of these are missing, report and stop — the
    gate should have caught this, but belt-and-braces.
@@ -338,8 +345,10 @@ Generate:
 
 After the evidence gate passes:
 
-1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="HANDOFF")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(expected_current="GENERATE", target="HANDOFF", evidence={"validation_grade": "<EXCELLENT|GOOD|ACCEPTABLE>", "task_count": <int>, "subtask_coverage": <float 0-1>, "placeholders_found": <int>})`.
    The call atomically transitions `pipeline.json` from GENERATE to HANDOFF.
+   The `expected_current` field is the compare-and-swap guard;
+   `evidence` is stored under `phase_evidence[HANDOFF]` for audit.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    HANDOFF directly — the orchestrator re-reads `current_phase` and routes.
 

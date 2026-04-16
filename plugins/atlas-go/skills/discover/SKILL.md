@@ -26,10 +26,18 @@ skill.**
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="DISCOVER")`.
-   If the call returns `{allowed: false, reason: ...}`, report the reason and
-   stop. The gate protects against re-entering a completed phase or skipping
-   ahead from SETUP.
+1. Call `mcp__plugin_atlas-go_go__check_gate(phase="DISCOVER", evidence={})`.
+   If the call returns `{gate_passed: false, violations: [...]}`, report the
+   violations and stop. The gate protects against re-entering a completed
+   phase or skipping ahead from SETUP.
+
+   **Known issue (Mum dogfood feedback [4]):** check_gate is structurally
+   an EXIT gate. On first DISCOVER entry, evidence=`{}` will fail the
+   `user_approved=true OR auto_classification=CLEAR with assumptions_documented`
+   requirement (which the User Approval Gate / Self-Approval Gate below
+   produces). State machine LEGAL_TRANSITIONS already prevents illegal
+   entry — proceed past this gate on first entry. Semantic fix in flight
+   (see morning brief).
 2. Detect execution context. If any of the following signals are present,
    switch to Autonomous Mode:
    - `.claude/ralph-loop.local.md` exists in the project root
@@ -175,8 +183,10 @@ arbitrary.
 After approval (Interactive) or commit (Autonomous), constraints captured,
 and scale classified:
 
-1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="GENERATE")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(expected_current="DISCOVER", target="GENERATE", evidence={"user_approved": True, "constraints_captured": True, "scale": "<Solo|Team|Enterprise>", "assumptions_documented": True})`.
    The call atomically transitions `pipeline.json` from DISCOVER to GENERATE.
+   The `expected_current` field is the compare-and-swap guard;
+   `evidence` is stored under `phase_evidence[GENERATE]` for audit.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    GENERATE directly — the orchestrator re-reads `current_phase` and routes.
 

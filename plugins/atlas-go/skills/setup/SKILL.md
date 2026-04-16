@@ -20,9 +20,19 @@ Declarative phase skill. Invoked by the prd-taskmaster orchestrator when
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="SETUP")`.
-   If the call returns `{allowed: false, reason: ...}`, report the reason and stop.
-   The gate protects against re-entering a completed phase or skipping ahead.
+1. Call `mcp__plugin_atlas-go_go__check_gate(phase="SETUP", evidence={})`.
+   If the call returns `{gate_passed: false, violations: [...]}`, report the
+   violations and stop. The gate protects against re-entering a completed
+   phase or skipping ahead.
+
+   **Known issue (Mum dogfood feedback [4]):** check_gate semantics are
+   structurally an EXIT gate (verifies evidence sufficient to advance) but
+   wired here as an ENTRY gate. On first entry, evidence=`{}` will fail
+   the SETUP gate's `validate_setup.ready=true` requirement (which Step 4
+   below produces). State machine LEGAL_TRANSITIONS (`None: ["SETUP"]`)
+   already prevents illegal entry — proceed past this gate on first entry
+   and rely on the exit gate for evidence verification. Semantic fix in
+   flight (see morning brief).
 
 ## Procedure (5 steps, abort on hard failure)
 
@@ -102,8 +112,10 @@ Setup:
 
 After Steps 1–5 report green:
 
-1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="DISCOVER")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(expected_current="SETUP", target="DISCOVER", evidence={"validate_setup": <Step 4 result dict>, "provider_configured": True})`.
    The call atomically transitions `pipeline.json` from SETUP to DISCOVER.
+   The `expected_current` field is the compare-and-swap guard;
+   `evidence` is stored under `phase_evidence[DISCOVER]` for audit.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    DISCOVER directly — the orchestrator re-reads `current_phase` and routes.
 
