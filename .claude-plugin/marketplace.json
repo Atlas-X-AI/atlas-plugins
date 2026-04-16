@@ -17,6 +17,12 @@
       "description": "Tmux session management MCP — fleet orchestration, session spawn/send/capture, RAM-aware triage",
       "source": "./plugins/atlas-launcher",
       "category": "development"
+    },
+    {
+      "name": "prd-taskmaster",
+      "description": "Zero-config goal-to-tasks engine for Claude Code, plugin-native rebuild with CDD-verified execution",
+      "source": "./plugins/prd-taskmaster",
+      "category": "development"
     }
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "name": "@atlas-ai/prd-taskmaster",
+  "version": "5.0.0",
+  "description": "Zero-config goal-to-tasks engine for Claude Code. Plugin-native rebuild with CDD-verified execution.",
+  "author": {
+    "name": "Atlas AI",
+    "url": "https://atlas-ai.au"
+  },
+  "homepage": "https://github.com/anombyte93/prd-taskmaster",
+  "repository": "https://github.com/anombyte93/prd-taskmaster.git",
+  "license": "MIT",
+  "keywords": ["claude-code", "taskmaster", "prd", "plugin", "cdd", "dogfood"]
+}
