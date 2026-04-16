@@ -26,7 +26,7 @@ skill.**
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas_go_go__check_gate(target_phase="DISCOVER")`.
+1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="DISCOVER")`.
    If the call returns `{allowed: false, reason: ...}`, report the reason and
    stop. The gate protects against re-entering a completed phase or skipping
    ahead from SETUP.
@@ -175,7 +175,7 @@ arbitrary.
 After approval (Interactive) or commit (Autonomous), constraints captured,
 and scale classified:
 
-1. Call `mcp__plugin_atlas_go_go__advance_phase(next_phase="GENERATE")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="GENERATE")`.
    The call atomically transitions `pipeline.json` from DISCOVER to GENERATE.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    GENERATE directly — the orchestrator re-reads `current_phase` and routes.

@@ -27,7 +27,7 @@ structured choice, dispatch the chosen mode. Mode D is a roadmap teaser only.**
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas_go_go__check_gate(target_phase="HANDOFF")`.
+1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="HANDOFF")`.
    If the call returns `{allowed: false, reason: ...}`, report the reason and
    stop. The gate protects against re-entering a completed phase or skipping
    ahead from GENERATE.
@@ -53,7 +53,7 @@ HANDOFF CHECKLIST:
 
 ## Step 1: Detect capabilities
 
-**MCP (preferred)**: `mcp__plugin_atlas_go_go__detect_capabilities()`
+**MCP (preferred)**: `mcp__plugin_atlas-go_go__detect_capabilities()`
 
 **CLI fallback**: `python3 script.py detect-capabilities`
 
@@ -362,7 +362,7 @@ Handoff:
 
 After the evidence gate passes:
 
-1. Call `mcp__plugin_atlas_go_go__advance_phase(next_phase="EXECUTE")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="EXECUTE")`.
    The call atomically transitions `pipeline.json` from HANDOFF to EXECUTE.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    EXECUTE directly — the orchestrator re-reads `current_phase` and routes.

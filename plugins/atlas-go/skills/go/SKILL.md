@@ -19,8 +19,8 @@ Pure routing. Reads pipeline state, dispatches to the correct phase skill.
 
 ## Flow
 
-1. Call `mcp__plugin_atlas_go_go__preflight()` — get environment state
-2. Call `mcp__plugin_atlas_go_go__current_phase()` — get pipeline state
+1. Call `mcp__plugin_atlas-go_go__preflight()` — get environment state
+2. Call `mcp__plugin_atlas-go_go__current_phase()` — get pipeline state
 3. Route via Skill tool:
    - current_phase is null or SETUP → invoke `/atlas-go:setup`
    - current_phase is DISCOVER → invoke `/atlas-go:discover`

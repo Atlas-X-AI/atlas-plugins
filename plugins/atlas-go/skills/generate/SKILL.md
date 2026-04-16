@@ -26,7 +26,7 @@ into tasks, expand every task into subtasks. Quality over speed.**
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas_go_go__check_gate(target_phase="GENERATE")`.
+1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="GENERATE")`.
    If the call returns `{allowed: false, reason: ...}`, report the reason and
    stop. The gate protects against re-entering a completed phase or skipping
    ahead from DISCOVER.
@@ -59,7 +59,7 @@ Decide based on discovery depth:
 - **Comprehensive**: 4+ detailed answers, complex project, Team / Enterprise scale
 - **Minimal**: thin answers, user wants speed, Solo scale
 
-**MCP (preferred)**: `mcp__plugin_atlas_go_go__load_template(type="comprehensive")`
+**MCP (preferred)**: `mcp__plugin_atlas-go_go__load_template(type="comprehensive")`
 
 **CLI fallback**: `python3 script.py load-template --type comprehensive`
 
@@ -152,7 +152,7 @@ path — downstream tools read from here.
 
 ## Step 3: Validate spec quality
 
-**MCP (preferred)**: `mcp__plugin_atlas_go_go__validate_prd(input_path=".taskmaster/docs/prd.md")`
+**MCP (preferred)**: `mcp__plugin_atlas-go_go__validate_prd(input_path=".taskmaster/docs/prd.md")`
 
 **CLI fallback**: `python3 script.py validate-prd --input .taskmaster/docs/prd.md`
 
@@ -183,7 +183,7 @@ is additive, never a replacement.
 
 Calculate task count first:
 
-**MCP**: `mcp__plugin_atlas_go_go__calc_tasks(requirements_count=<count>)`
+**MCP**: `mcp__plugin_atlas-go_go__calc_tasks(requirements_count=<count>)`
 
 **CLI**: `python3 script.py calc-tasks --requirements <count>`
 
@@ -191,7 +191,7 @@ Then parse (detect method from preflight):
 
 **MCP (preferred)**: `mcp__task-master-ai__parse_prd(input=".taskmaster/docs/prd.md", numTasks=<recommended>)`
 
-**MCP fallback**: `mcp__plugin_atlas_go_go__tm_parse_prd(input_path=".taskmaster/docs/prd.md", num_tasks=<recommended>)`
+**MCP fallback**: `mcp__plugin_atlas-go_go__tm_parse_prd(input_path=".taskmaster/docs/prd.md", num_tasks=<recommended>)`
 
 **CLI**: `task-master parse-prd --input .taskmaster/docs/prd.md --num-tasks <recommended>`
 
@@ -205,7 +205,7 @@ classification:
 
 **MCP (preferred)**: `mcp__task-master-ai__analyze_complexity` (analyzes all tasks)
 
-**MCP fallback**: `mcp__plugin_atlas_go_go__tm_analyze_complexity` (wraps the CLI)
+**MCP fallback**: `mcp__plugin_atlas-go_go__tm_analyze_complexity` (wraps the CLI)
 
 **CLI**: `task-master analyze-complexity`
 
@@ -338,7 +338,7 @@ Generate:
 
 After the evidence gate passes:
 
-1. Call `mcp__plugin_atlas_go_go__advance_phase(next_phase="HANDOFF")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="HANDOFF")`.
    The call atomically transitions `pipeline.json` from GENERATE to HANDOFF.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    HANDOFF directly — the orchestrator re-reads `current_phase` and routes.

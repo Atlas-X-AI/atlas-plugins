@@ -20,7 +20,7 @@ Declarative phase skill. Invoked by the prd-taskmaster orchestrator when
 
 ## Entry gate
 
-1. Call `mcp__plugin_atlas_go_go__check_gate(target_phase="SETUP")`.
+1. Call `mcp__plugin_atlas-go_go__check_gate(target_phase="SETUP")`.
    If the call returns `{allowed: false, reason: ...}`, report the reason and stop.
    The gate protects against re-entering a completed phase or skipping ahead.
 
@@ -80,7 +80,7 @@ Research role.
 ### Step 4: Probe test
 
 If tasks already exist, call the MCP tool
-`mcp__plugin_atlas_go_go__validate_setup` or run
+`mcp__plugin_atlas-go_go__validate_setup` or run
 `task-master analyze-complexity --id 1`.
 
 If no tasks exist yet (fresh project), skip the probe — Step 3's provider
@@ -102,7 +102,7 @@ Setup:
 
 After Steps 1–5 report green:
 
-1. Call `mcp__plugin_atlas_go_go__advance_phase(next_phase="DISCOVER")`.
+1. Call `mcp__plugin_atlas-go_go__advance_phase(next_phase="DISCOVER")`.
    The call atomically transitions `pipeline.json` from SETUP to DISCOVER.
 2. Return control to the orchestrator (`prd-taskmaster` skill). Do NOT invoke
    DISCOVER directly — the orchestrator re-reads `current_phase` and routes.

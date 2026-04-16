@@ -3,7 +3,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "mcp__plugin_atlas_go_go__advance_phase",
+        "matcher": "mcp__plugin_atlas-go_go__advance_phase",
         "hooks": [
           {"type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/gate_enforcer.py"}
         ]
