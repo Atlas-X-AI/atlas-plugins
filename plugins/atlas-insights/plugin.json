@@ -1,0 +1,60 @@
+{
+  "name": "atlas-insights",
+  "version": "0.1.0",
+  "description": "Unified insight pipeline for Atlas-X-AI: harvester hooks (PostToolUse + SessionEnd), insight-review and insight-enhance skills, and a federated shade-insights-rag MCP server. One corpus on archie today, Pinecone-ready. Drop-in for hermes, archie, and any future client host.",
+  "author": "anombyte / Atlas AI",
+  "homepage": "https://atlas-ai.au",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/insight-harvester.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/insight-session-scrape.sh",
+            "timeout": 30000
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "shade-insights-rag": {
+      "command": "ssh",
+      "args": [
+        "-o", "BatchMode=yes",
+        "-o", "ServerAliveInterval=30",
+        "${ATLAS_INSIGHTS_CORPUS_HOST:-archie}",
+        "/home/anombyte/.local/bin/uv", "run",
+        "--project", "/home/anombyte/Shade_Gen/Projects/shade-insights-rag",
+        "shade-insights-mcp"
+      ],
+      "env": {}
+    }
+  },
+  "config": {
+    "ATLAS_INSIGHTS_CORPUS_HOST": {
+      "default": "archie",
+      "description": "Hostname (or Tailnet alias) of the corpus host running moll-e + shade-insights-rag"
+    },
+    "ATLAS_INSIGHTS_ENDPOINT": {
+      "default": "http://100.113.114.116:3100/insight/store",
+      "description": "moll-e write endpoint. Defaults to archie's Tailnet IP. On the corpus host itself, override to http://127.0.0.1:3100/insight/store for localhost."
+    },
+    "ATLAS_INSIGHTS_HOST_TAG": {
+      "default": "$(hostname)",
+      "description": "Tag applied to ingested rows so cross-host insights are distinguishable in the corpus."
+    }
+  }
+}

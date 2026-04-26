@@ -23,6 +23,12 @@
       "description": "Zero-config goal-to-tasks engine for Claude Code. Plugin-native rebuild with CDD-verified execution.",
       "source": "./plugins/atlas-go",
       "category": "development"
+    },
+    {
+      "name": "atlas-insights",
+      "description": "Unified insight pipeline: PostToolUse + SessionEnd auto-capture, /insight-review and /insight-enhance skills, federated shade-insights-rag MCP. One corpus, every host, every AI. Upstream: github.com/anombyte93/atlas-insights",
+      "source": "./plugins/atlas-insights",
+      "category": "knowledge-management"
     }
   ]
 }

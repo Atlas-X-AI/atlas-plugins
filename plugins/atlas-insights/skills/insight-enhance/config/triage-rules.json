@@ -1,0 +1,105 @@
+{
+  "$schema": "insight-enhance-triage-rules/v1",
+  "description": "Deterministic classification rules for /insight-enhance. Rules evaluated in order; first matching outcome wins. Edit this file to retune the skill's judgement without touching code.",
+  "length_bounds": {
+    "min_chars": 150,
+    "max_chars": 2000,
+    "rationale": "Below 150 chars: too terse to have meaningful claim surface. Above 2000 chars: already dense; enrichment adds noise."
+  },
+  "skip_if": [
+    {
+      "name": "already_enriched",
+      "test": "row.is_enriched == 1",
+      "reason": "Enriched rows must not be re-enriched (prevents v2→v3 drift)."
+    },
+    {
+      "name": "already_has_citations",
+      "test": "regex:\\[\\d+\\]",
+      "match_against": "content",
+      "reason": "Row already carries [N] citation markers; assumed complete unless --force."
+    },
+    {
+      "name": "self_observation",
+      "test": "regex_ci:(we noticed|in this session|i found|today we|just now|earlier today)",
+      "match_against": "content",
+      "reason": "Transient session observation; not transferable knowledge — belongs in session-context, not enriched insights."
+    },
+    {
+      "name": "superseded",
+      "test": "row.superseded_by IS NOT NULL",
+      "reason": "Row already replaced by a later enrichment."
+    },
+    {
+      "name": "locked",
+      "test": "row.processing_lock IS NOT NULL",
+      "reason": "Another /insight-enhance run is processing this row."
+    }
+  ],
+  "enrichable_signals": [
+    {
+      "name": "has_factual_claim_no_citation",
+      "test": "regex_ci:(studies show|research indicates|typically|usually|often|in practice|by default|most [a-z]+)",
+      "match_against": "content",
+      "weight": 3,
+      "rationale": "Generalised claim without specific source — strong candidate."
+    },
+    {
+      "name": "has_tool_or_library_name",
+      "test": "regex_ci:(\\b(API|CLI|MCP|OAuth|JWT|SQLite|PostgreSQL|Redis|Docker|Kubernetes|GitHub|Claude|Perplexity|Nginx|HTTP|TCP|UDP|TLS|SSH|GPG|AES|RSA|HMAC)\\b)",
+      "match_against": "content",
+      "weight": 2,
+      "rationale": "Named tool/library → likely has authoritative docs via Context7."
+    },
+    {
+      "name": "has_version_number",
+      "test": "regex:v?\\d+\\.\\d+(\\.\\d+)?",
+      "match_against": "content",
+      "weight": 2,
+      "rationale": "Version number indicates specific factual claim that can be verified."
+    },
+    {
+      "name": "pentest_tag_no_cve",
+      "test": "regex_i:\\[PENTEST\\]",
+      "match_against": "content",
+      "negative_test": "regex_i:(CVE-\\d{4}-\\d+|MITRE|ATT&CK|KEV)",
+      "weight": 2,
+      "rationale": "[PENTEST] insight without MITRE/CVE anchor — often enrichable via known-exploit databases."
+    },
+    {
+      "name": "vague_quantifier",
+      "test": "regex_ci:\\b(many|several|some|a few|various|common|popular|widely)\\b",
+      "match_against": "content",
+      "weight": 1,
+      "rationale": "Vague quantifier — candidate for quantified replacement."
+    }
+  ],
+  "routing": {
+    "description": "Which composition skill to dispatch per insight shape.",
+    "rules": [
+      {
+        "name": "factoid_single_claim",
+        "test": "word_count < 80 AND claim_count <= 1",
+        "route_to": "/question",
+        "mode": "quick",
+        "rationale": "Single-claim short insights → /question quick-mode (1 convergent query)."
+      },
+      {
+        "name": "architecture_multi_claim",
+        "test": "word_count >= 80 OR claim_count >= 2",
+        "route_to": "/research-before-coding",
+        "rationale": "Multi-claim or pattern-level insights → full research pipeline."
+      }
+    ]
+  },
+  "hard_gates": {
+    "min_citations_required": 2,
+    "max_enriched_length_multiplier": 2.0,
+    "max_enrichments_per_run_default": 5,
+    "url_validation_required": true,
+    "min_urls_must_200_ok": 1,
+    "opener_preserve_chars": 50,
+    "rationale": "These gates are load-bearing. Lowering them defeats the audit-driven failure-mode mitigations."
+  },
+  "version": "1.0",
+  "generated_at": "2026-04-23"
+}

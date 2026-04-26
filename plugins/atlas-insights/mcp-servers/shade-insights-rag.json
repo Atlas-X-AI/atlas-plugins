@@ -1,0 +1,13 @@
+{
+  "command": "ssh",
+  "args": [
+    "-o", "BatchMode=yes",
+    "-o", "ServerAliveInterval=30",
+    "archie",
+    "/home/anombyte/.local/bin/uv",
+    "run",
+    "--project", "/home/anombyte/Shade_Gen/Projects/shade-insights-rag",
+    "shade-insights-mcp"
+  ],
+  "env": {}
+}

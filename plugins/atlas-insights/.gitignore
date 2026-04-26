@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local-only test/debug artefacts
+*.log
+/tmp/
+
+# Env / secrets — never commit
+.env
+.env.local
+*.pem
+*.key
